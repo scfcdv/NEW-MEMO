@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Memo Pad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #memo-input {
+            width: 100%;
+            height: 150px;
+            resize: none;
+        }
+        #memo-list {
+            margin-top: 10px;
+        }
+        .memo-item {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="memo-input" placeholder=""></textarea>
+    <button onclick="saveMemo()">保存</button>
+    <div id="memo-list">
+        <h2>あなたのメモ:</h2>
+    </div>
+
+    <script>
+        function saveMemo() {
+            const memoText = document.getElementById('memo-input').value;
+            if (memoText.trim() !== '') {
+                const memoItem = document.createElement('div');
+                memoItem.className = 'memo-item';
+                memoItem.textContent = memoText;
+                document.getElementById('memo-list').appendChild(memoItem);
+
+                // Save the memo to a cookie
+                const currentDate = new Date();
+                currentDate.setFullYear(currentDate.getFullYear() + 1); // Cookie expiration in 1 year
+                document.cookie = `memo=${encodeURIComponent(memoText)};expires=${currentDate.toUTCString()};path=/`;
+            }
+        }
+
+        // Function to retrieve and display existing memos from cookies on page load
+        function displayMemosFromCookies() {
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'memo') {
+                    const memoItem = document.createElement('div');
+                    memoItem.className = 'memo-item';
+                    memoItem.textContent = decodeURIComponent(value);
+                    document.getElementById('memo-list').appendChild(memoItem);
+                }
+            }
+        }
+
+        displayMemosFromCookies();
+    </script>
+</body>
+</html>
